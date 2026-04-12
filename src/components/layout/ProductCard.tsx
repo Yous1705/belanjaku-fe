@@ -1,5 +1,5 @@
 import { ProductCardProps, ProductTypeDashboard } from "@/type/product.type";
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardAction,
@@ -11,17 +11,35 @@ import {
 } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { Eye, ShoppingCart } from "lucide-react";
+import { Eye, Heart, ShoppingCart } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 function ProductCard({
   name,
+  slug,
   description,
   price,
   images,
   category,
+  isWishlisted,
+  onWishlistToggle,
 }: ProductCardProps) {
   return (
     <Card className="relative mx-auto w-full max-w-sm pt-0">
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          onWishlistToggle?.();
+        }}
+        className="absolute right-3 top-3 z-40 rounded-full bg-white/80 p-2 backdrop-blur-sm transition-all hover:bg-white"
+      >
+        <Heart
+          className={cn(
+            "h-5 w-5 transition-colors",
+            isWishlisted ? "fill-red-500 text-red-500" : "text-slate-600",
+          )}
+        />
+      </button>
       <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
       <img
         src={images?.[0] || "/images/image.jpg"}
@@ -37,7 +55,7 @@ function ProductCard({
             variant="secondary"
             className="bg-emerald-600 hover:bg-emerald-700 text-white"
           >
-            {category.name}
+            {category}
           </Badge>
         </CardAction>
         <CardTitle className="line-clamp-1 text-xl font-bold">{name}</CardTitle>

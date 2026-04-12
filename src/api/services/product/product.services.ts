@@ -1,9 +1,35 @@
 import { apiFetch } from "@/api/client";
 import { token } from "@/api/token";
-import { ProductTypeDashboard } from "@/type/product.type";
+import {
+  MyWishlistType,
+  ProductTypeDashboard,
+  ToggleWishlistResponse,
+} from "@/type/product.type";
 
 export async function getProductsApi() {
   return apiFetch<ProductTypeDashboard[]>("/product/all-products", {
+    method: "GET",
+    headers: authHeader(),
+  });
+}
+
+export async function getMyWishlistsApi() {
+  return apiFetch<MyWishlistType[]>("/wishlist/my-wishlists", {
+    method: "GET",
+    headers: authHeader(),
+  });
+}
+
+export async function toggleWishlistApi(slug: string) {
+  return apiFetch<ToggleWishlistResponse>(`/wishlist/toggle/${slug}`, {
+    method: "POST",
+    headers: authHeader(),
+  });
+}
+
+// Pastikan fungsi ini memanggil endpoint wishlist yang benar (sesuai controller kamu)
+export async function getMyWishlistApi() {
+  return apiFetch<ProductTypeDashboard[]>("/wishlist/my-wishlist", {
     method: "GET",
     headers: authHeader(),
   });

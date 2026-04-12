@@ -2,6 +2,7 @@
 import {
   getProductsApi,
   searchProductApi,
+  toggleWishlistApi,
 } from "@/api/services/product/product.services";
 import { token } from "@/api/token";
 import ProductCard from "@/components/layout/ProductCard";
@@ -17,6 +18,22 @@ function dashboardPage() {
   const handleLogout = () => {
     token.clear();
     router.replace("auth/login");
+  };
+
+  const handleToggleWishlist = async (slug: string) => {
+    try {
+      const response = await toggleWishlistApi(slug);
+
+      // Update state products secara lokal agar UI langsung berubah
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.slug === slug ? { ...p, isWishlisted: response.isWishlisted } : p,
+        ),
+      );
+    } catch (err) {
+      console.error("Failed to toggle wishlist", err);
+      // Optional: tambahkan toast notification error di sini
+    }
   };
   const handleSearch = async () => {
     setLoading(true);
@@ -36,7 +53,6 @@ function dashboardPage() {
   const [error, setError] = useState("");
   const [products, setProducts] = useState<ProductTypeDashboard[]>([]);
   const [search, setSearch] = useState("");
-
   useEffect(() => {
     getProductsApi()
       .then(setProducts)
@@ -88,18 +104,7 @@ function dashboardPage() {
           />
           <Button onClick={handleSearch}>Search</Button>
         </Field>
-        {/* <input
-          type="text"
-          placeholder="search Product..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className=" border-2 py-2 rounded-lg"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleSearch();
-            }
-          }}
-        /> */}
+
         {/* Hero Header */}
         <div className="mb-12">
           <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
@@ -117,10 +122,13 @@ function dashboardPage() {
             <ProductCard
               key={product.id}
               name={product.name}
+              slug={product.slug}
               category={product.category}
               description={product.description}
               price={product.price}
               images={product.images}
+              isWishlisted={product.isWishlisted}
+              onWishlistToggle={() => handleToggleWishlist(product.slug)}
             />
           ))}
         </div>
