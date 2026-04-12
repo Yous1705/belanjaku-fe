@@ -42,5 +42,13 @@ export type MyWishlistType = {
   slug: string;
   price: number;
   category: string;
-  images: string[];
+  images: string;
+};
+
+export type MyWishlistProps = {
+  name: string;
+  // slug: string;
+  price: number;
+  category: string;
+  images: string;
 };
