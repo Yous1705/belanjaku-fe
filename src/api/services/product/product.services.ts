@@ -27,14 +27,6 @@ export async function toggleWishlistApi(slug: string) {
   });
 }
 
-// Pastikan fungsi ini memanggil endpoint wishlist yang benar (sesuai controller kamu)
-export async function getMyWishlistApi() {
-  return apiFetch<ProductTypeDashboard[]>("/wishlist/my-wishlist", {
-    method: "GET",
-    headers: authHeader(),
-  });
-}
-
 export async function searchProductApi(params?: {
   search?: string;
   category?: string;

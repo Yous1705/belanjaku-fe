@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ProductTypeDashboard } from "@/type/product.type";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -75,6 +76,9 @@ function dashboardPage() {
               ku
             </span>
           </div>
+          <Link href="/wishlist" className="border-2 px-3 py-3">
+            my-wishlist
+          </Link>
 
           <div className="flex items-center gap-4">
             <span className="hidden text-sm font-medium text-slate-600 md:block">
