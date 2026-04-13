@@ -13,6 +13,7 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Eye, Heart, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 function ProductCard({
   name,
@@ -24,6 +25,7 @@ function ProductCard({
   isWishlisted,
   onWishlistToggle,
 }: ProductCardProps) {
+  const router = useRouter();
   return (
     <Card className="relative mx-auto w-full max-w-sm pt-0">
       <button
@@ -70,7 +72,11 @@ function ProductCard({
       </CardHeader>
 
       <CardFooter className="grid grid-cols-2 gap-3 p-5 pt-5">
-        <Button variant="outline" className="w-full flex gap-2">
+        <Button
+          variant="outline"
+          className="w-full flex gap-2"
+          onClick={() => router.push(`/product/${slug}`)}
+        >
           <Eye className="h-4 w-4" /> Detail
         </Button>
         <Button className="w-full bg-emerald-600 hover:bg-emerald-700 flex gap-2">

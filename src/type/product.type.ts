@@ -1,3 +1,15 @@
+export type ProductDetailTyep = {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  price: number;
+  stock: number;
+  images: {
+    url: string;
+  }[];
+};
+
 export type ProductTypeDashboard = {
   id: number;
   name: string;
@@ -51,4 +63,8 @@ export type MyWishlistProps = {
   price: number;
   category: string;
   images: string;
+};
+
+export type PageProps = {
+  slug: string;
 };
