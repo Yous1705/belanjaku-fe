@@ -51,7 +51,7 @@ function loginPage() {
                   Email
                 </label>
               </div>
-              <div className="felx items-center gap-2 rounded-2xl border bg-white px-4 py-3">
+              <div className="flex items-center gap-2 rounded-2xl border bg-white px-4 py-3">
                 <span className="text-slate-400">✉️</span>
                 <input
                   type="email"
@@ -79,7 +79,7 @@ function loginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPass((p) => !p)}
-                    className="text-xs fonnt-medium text-slate-600 hover:text-slate-900 px-2 py-1 rounded-lg hover:bg-slate-100"
+                    className="text-xs font-medium text-slate-600 hover:text-slate-900 px-2 py-1 rounded-lg hover:bg-slate-100"
                   >
                     {showPass ? "Hide" : "Show"}
                   </button>

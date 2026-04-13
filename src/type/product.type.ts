@@ -1,12 +1,48 @@
-export type ProductDetailTyep = {
+export type ProductDetailType = {
   id: number;
   name: string;
   slug: string;
   description: string;
   price: number;
   stock: number;
+  category: {
+    name: string;
+  };
   images: {
     url: string;
+  }[];
+  specifications: {
+    key: string;
+    value: string;
+  }[];
+  reviews: {
+    rating: number;
+    comment: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+};
+
+export type ProductDetailProps = {
+  images: {
+    url: string;
+  }[];
+  category: {
+    name: string;
+  };
+  name: string;
+  price: number;
+  description: string;
+  stock: number;
+  reviews: {
+    rating: number;
+    comment?: string;
+    createdAt?: string;
+    updatedAt?: string;
+  }[];
+  specifications: {
+    key: string;
+    value: string;
   }[];
 };
 

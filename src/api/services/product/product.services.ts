@@ -2,7 +2,7 @@ import { apiFetch } from "@/api/client";
 import { token } from "@/api/token";
 import {
   MyWishlistType,
-  ProductDetailTyep,
+  ProductDetailType,
   ProductTypeDashboard,
   ToggleWishlistResponse,
 } from "@/type/product.type";
@@ -15,7 +15,7 @@ export async function getProductsApi() {
 }
 
 export async function getProductDetailApi(slug: string) {
-  return apiFetch<ProductDetailTyep>(`/product/product-detail/${slug}`, {
+  return apiFetch<ProductDetailType>(`/product/product-detail/${slug}`, {
     method: "GET",
     headers: authHeader(),
   });
