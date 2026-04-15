@@ -21,10 +21,11 @@ import {
 import { useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
+import { addItemToChart } from "@/api/services/cart/cart.services";
 
 function ProductDetail({
   name,
-  //   slug,
+  slug,
   description,
   price,
   stock,
@@ -58,202 +59,285 @@ function ProductDetail({
     });
   }, [api]);
 
+  const renderStars = (rating: number) => {
+    const stars = [];
+    const roundedRating = Math.round(Number(rating) * 2) / 2;
+    for (let i = 1; i <= 5; i++) {
+      if (i <= roundedRating) {
+        stars.push(
+          <Star
+            key={i}
+            size={14}
+            className="fill-yellow-400 text-yellow-400"
+          />,
+        );
+      } else if (i - 0.5 === roundedRating) {
+        stars.push(
+          <div key={i} className="relative">
+            <Star size={14} className="text-zinc-200" />
+            <Star
+              size={14}
+              className="fill-yellow-400 text-yellow-400 absolute inset-0"
+              style={{ clipPath: "inset(0 50% 0 0)" }}
+            />
+          </div>,
+        );
+      } else {
+        stars.push(<Star key={i} size={14} className="text-zinc-200" />);
+      }
+    }
+    return stars;
+  };
+
+  const hadnleAddItemToChart = async (slug: string, quantity: number) => {
+    try {
+      const response = await addItemToChart({ slug, quantity });
+    } catch (error) {
+      console.error("Gagal menambah keranjang:", error);
+    }
+  };
+
   return (
-    <div>
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-20">
-        <div className="lg:col-span-7">
-          <div className="relative group">
+    <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 xl:gap-24">
+        {/* LEFT: IMAGE GALLERY (Industrial Frame) */}
+        <div className="lg:col-span-7 space-y-6">
+          <div className="relative group overflow-hidden border border-zinc-100 bg-zinc-50">
             <Carousel setApi={setApi}>
               <CarouselContent>
                 {images.map((image, index) => (
                   <CarouselItem key={index}>
-                    <div className="relative aspect-square rounded-[2.5rem] overflow-hidden bg-slate-50 border border-slate-100 group">
+                    <div className="relative aspect-square overflow-hidden">
                       <img
-                        key={index}
-                        src={image.url}
-                        alt={`Gambar ${index}`}
+                        src={image.url || "/images/image.jpg"}
+                        alt={name}
                         onError={(e) => {
                           e.currentTarget.src = "/images/image.jpg";
                         }}
-                        className="w-full h-full object-cover transition-transform duration-1000 hover:scale-110"
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                       />
-                      <div className="absolute top-8 right-8">
-                        <button className="p-4 bg-white/90 backdrop-blur-md rounded-2xl shadow-xl hover:bg-white transition text-slate-600 hover:text-red-500 active:scale-90">
-                          <Heart className="w-6 h-6" />
-                        </button>
-                      </div>
                     </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="hidden md:flex" />
-              <CarouselNext className="hidden md:flex" />
+              <CarouselPrevious className="left-4 bg-white/80 border-none rounded-none h-12 w-12" />
+              <CarouselNext className="right-4 bg-white/80 border-none rounded-none h-12 w-12" />
             </Carousel>
           </div>
-          <div className="flex gap-4 mt-8 overflow-x-auto pb-4 no-scrollbar">
+
+          {/* Thumbnails */}
+          <div className="flex gap-4 overflow-x-auto no-scrollbar">
             {images.map((image, index) => (
               <button
                 key={index}
                 onClick={() => handleThumbClick(index)}
-                className={`relative flex-shrink-0 w-24 h-24 rounded-2xl overflow-hidden transition-all duration-300 border-2 ${
+                className={`relative flex-shrink-0 w-20 h-20 overflow-hidden transition-all duration-300 border ${
                   activeIdx === index
-                    ? "border-black scale-95 ring-4 ring-black/5"
-                    : "border-transparent opacity-40 hover:opacity-100"
+                    ? "border-zinc-900 opacity-100"
+                    : "border-transparent opacity-40"
                 }`}
               >
                 <img
-                  src={image.url}
-                  onError={(e) => {
-                    e.currentTarget.src = "/images/banner.jpg";
-                  }}
+                  src={image.url || "/images/image.jpg"}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = "/images/image.jpg";
+                  }}
                 />
               </button>
             ))}
           </div>
         </div>
 
-        <div className="lg:col-span-5 flex flex-col ">
-          <div className="mb-6">
-            <Badge className="bg-slate-100 text-slate-900 border-none px-4 py-1.5 text-[10px] font-black uppercase tracking-widest mb-4">
+        {/* RIGHT: PRODUCT INFO (Clean Typography) */}
+        <div className="lg:col-span-5 flex flex-col pt-4">
+          <div className="space-y-6 mb-10">
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400">
               {category.name}
-            </Badge>
-            <h1 className="text-4xl xl:text-5xl font-black tracking-tighter mb-4 leading-tight">
+            </span>
+            <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">
               {name}
             </h1>
-            <div className="flex items-center gap-4 text-sm font-bold">
-              <div className="flex items-center gap-1.5 text-amber-500">
-                <Star className="w-4 h-4 fill-current">{averageRating}</Star>
+
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <div className="flex gap-0.5">
+                  {renderStars(Number(averageRating))}
+                </div>
+                <span className="text-xs font-black ml-1">{averageRating}</span>
               </div>
-              <span className="text-slate-300">|</span>
-              <span className="text-slate-500">{reviews.length} Ulasan</span>
+              <div className="h-4 w-[1px] bg-zinc-200" />
+              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                {reviews.length} Verified Reviews
+              </span>
+            </div>
+
+            <div className="text-4xl font-black tracking-tighter border-y border-zinc-100 py-8">
+              Rp {price.toLocaleString()}
             </div>
           </div>
 
-          <div className="mb-10">
-            <span className="text-4xl font-black tracking-tighter">
-              Rp {price.toLocaleString()}
-            </span>
-          </div>
-          <div className="space-y-8">
+          <div className="space-y-10">
             <div>
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 flex items-center gap-2">
-                Ringkasan Product
+              <h3 className="text-[9px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-4">
+                Description
               </h3>
-              <p className="text-slate-600 leading-relaxed text-lg font-medium italic">
+              <p className="text-zinc-600 leading-relaxed font-medium">
                 {description}
               </p>
             </div>
 
-            <Separator />
-            <div className="space-y-6">
-              <div className="flex items-center justify-between p-2 pl-6 bg-slate-50 rounded-[2rem] border border-slate-100">
-                <span className="font-bold text-[10px] uppercase tracking-widest text-slate-400">
-                  Jumlah
+            {/* ACTION AREA */}
+            <div className="space-y-6 pt-6 border-t border-zinc-100">
+              <div className="flex items-center justify-between">
+                <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">
+                  Quantity
                 </span>
-                <div className="flex items-center gap-2 bg-white rounded-full shadow-sm border p-1.5">
+                <div className="flex items-center border border-zinc-200">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-10 h-10 flex items-center justify-center hover:bg-slate-50 rounded-full transition disabled:opacity-10"
-                    disabled={quantity <= 1}
+                    className="w-12 h-12 flex items-center justify-center hover:bg-zinc-50 transition"
                   >
-                    <Minus className="w-4 h-4" />
+                    <Minus size={14} />
                   </button>
-                  <span className="w-8 text-center font-black text-xl">
+                  <span className="w-12 text-center font-black">
                     {quantity}
                   </span>
                   <button
                     onClick={() => setQuantity(Math.min(stock, quantity + 1))}
-                    className="w-10 h-10 flex items-center justify-center hover:bg-slate-50 rounded-full transition disabled:opacity-10"
-                    disabled={quantity >= stock}
+                    className="w-12 h-12 flex items-center justify-center hover:bg-zinc-50 transition"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus size={14} />
                   </button>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-                <Button className="sm:col-span-4 h-16 rounded-[2rem] text-sm font-black tracking-widest uppercase bg-black hover:bg-slate-800 transition-all shadow-xl shadow-black/10">
-                  <ShoppingCart className="w-5 h-5 mr-2" /> Tambahkan Ke Tas
+
+              <div className="grid grid-cols-5 gap-3">
+                <Button
+                  className="col-span-4 h-16 rounded-none bg-zinc-900 text-white font-black uppercase tracking-widest text-xs hover:bg-zinc-800 transition-all"
+                  onClick={() => hadnleAddItemToChart(slug, quantity)}
+                >
+                  <ShoppingCart size={18} className="mr-3" /> Add To Cart
                 </Button>
                 <Button
                   variant="outline"
-                  className="h-16 rounded-[2rem] flex items-center justify-center border-2 border-slate-100 hover:border-black transition-all"
+                  className="h-16 rounded-none border-zinc-200 hover:bg-zinc-50"
                 >
-                  <Share2 className="w-5 h-5" />
+                  <Heart size={20} />
                 </Button>
               </div>
             </div>
-            <div className="flex gap-4">
-              <div className="flex-1 flex items-center gap-4 p-4 rounded-3xl bg-slate-50/50 border border-slate-100">
-                <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-white rounded-xl shadow-sm text-slate-600">
-                  <Truck className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">
-                    Kurir
-                  </p>
-                  <p className="text-xs font-bold">Gratis Ongkir</p>
-                </div>
+
+            {/* TRUST BADGES */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center gap-4 p-4 bg-zinc-50 border border-zinc-100">
+                <Truck size={20} className="text-zinc-400" strokeWidth={1.5} />
+                <span className="text-[10px] font-black uppercase tracking-widest">
+                  Free Shipping
+                </span>
               </div>
-              <div className="flex-1 flex items-center gap-4 p-4 rounded-3xl bg-slate-50/50 border border-slate-100">
-                <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-white rounded-xl shadow-sm text-slate-600">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">
-                    Proteksi
-                  </p>
-                  <p className="text-xs font-bold">12 Bln Resmi</p>
-                </div>
+              <div className="flex items-center gap-4 p-4 bg-zinc-50 border border-zinc-100">
+                <ShieldCheck
+                  size={20}
+                  className="text-zinc-400"
+                  strokeWidth={1.5}
+                />
+                <span className="text-[10px] font-black uppercase tracking-widest">
+                  1 Year Warranty
+                </span>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* TABS SECTION */}
       <div className="mt-32">
-        <div className="flex gap-12 border-b border-slate-100 overflow-x-auto no-scrollbar">
+        <div className="flex gap-12 border-b border-zinc-100">
           {[
-            { id: "spec", label: "Spesifikasi" },
-            { id: "review", label: `Ulasan (${reviews.length})` },
-            { id: "discussion", label: "Diskusi" },
+            { id: "spec", label: "Specifications" },
+            { id: "review", label: `Reviews (${reviews.length})` },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`pb-5 text-[11px] font-black uppercase tracking-[0.2em] transition-all relative ${
+              className={`pb-6 text-[10px] font-black uppercase tracking-[0.3em] transition-all relative ${
                 activeTab === tab.id
-                  ? "text-black"
-                  : "text-slate-400 hover:text-slate-600"
+                  ? "text-zinc-900"
+                  : "text-zinc-400 hover:text-zinc-600"
               }`}
             >
               {tab.label}
               {activeTab === tab.id && (
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-black rounded-full" />
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-zinc-900 animate-in fade-in zoom-in duration-300" />
               )}
             </button>
           ))}
         </div>
-        <div className="py-16">
+
+        <div className="py-20">
+          {/* Tab Spesifikasi */}
           {activeTab === "spec" && (
-            <div className="max-w-4xl space-y-12 animate-in fade-in slide-in-from-bottom-2 duration-700">
-              <h3 className="text-3xl font-black mb-10 tracking-tighter">
-                Detail Product
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-24 gap-y-2">
-                {specifications.map((item, i) => (
-                  <div
-                    key={i}
-                    className="flex justify-between py-6 border-b border-slate-50 group hover:bg-slate-50/50 px-4 transition-all"
-                  >
-                    <span className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">
-                      {item.key}
-                    </span>
-                    <span className="font-bold text-sm text-slate-900">
-                      {item.value}
-                    </span>
-                  </div>
-                ))}
+            <div
+              key="spec-content"
+              className="max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-2 animate-in fade-in slide-in-from-bottom-8 duration-700"
+            >
+              {specifications.map((item, i) => (
+                <div
+                  key={i}
+                  className="flex justify-between py-6 border-b border-zinc-50 hover:bg-zinc-50/50 px-2 transition-colors"
+                >
+                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                    {item.key}
+                  </span>
+                  <span className="font-bold text-sm uppercase tracking-tight text-zinc-900">
+                    {item.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Tab Review */}
+          {activeTab === "review" && (
+            <div
+              key="review-content"
+              className="max-w-4xl space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-700"
+            >
+              <div className="flex items-center gap-4 mb-10">
+                <h3 className="text-2xl font-black uppercase tracking-tighter">
+                  Customer Feedback
+                </h3>
+                <div className="h-px flex-1 bg-zinc-100" />
               </div>
+
+              {reviews.length > 0 ? (
+                reviews.map((rev, idx) => (
+                  <div
+                    key={idx}
+                    className="pb-8 border-b border-zinc-50 last:border-none"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex gap-0.5">
+                        {renderStars(rev.rating)}
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-zinc-300">
+                        Verified Client
+                      </span>
+                    </div>
+                    <p className="text-zinc-600 font-medium italic leading-relaxed text-lg">
+                      "{rev.comment}"
+                    </p>
+                    <p className="mt-2 text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                      — {rev.createdAt || "Member"}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-zinc-400 text-[10px] font-black uppercase tracking-widest">
+                  No reviews yet.
+                </p>
+              )}
             </div>
           )}
         </div>

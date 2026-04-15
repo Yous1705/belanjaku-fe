@@ -27,7 +27,7 @@ function loginPage() {
       token.set(res.access_token);
       const payload = decodeJwt(res.access_token);
 
-      router.push(`/dashboard`);
+      router.push(`/product`);
       router.refresh();
     } catch (e: any) {
       alert(e?.message ?? "Login gagal. Coba lagi.");

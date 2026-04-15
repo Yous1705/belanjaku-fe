@@ -31,6 +31,7 @@ export type ProductDetailProps = {
     name: string;
   };
   name: string;
+  slug: string;
   price: number;
   description: string;
   stock: number;
@@ -53,8 +54,12 @@ export type ProductTypeDashboard = {
   description: string;
   category: string;
   price: number;
+  displayPrice: number;
   images: string;
   isWishlisted: boolean;
+  reviews: {
+    rating: number;
+  }[];
 };
 
 export type ProductCardProps = {
@@ -64,8 +69,12 @@ export type ProductCardProps = {
   price: number;
   images: string;
   category: string;
+  displayPrice: number;
   isWishlisted: boolean;
   onWishlistToggle?: () => void;
+  reviews: {
+    rating: number;
+  };
 };
 
 export type ProductTypeDetail = {
@@ -103,4 +112,28 @@ export type MyWishlistProps = {
 
 export type PageProps = {
   slug: string;
+};
+
+export type CartItemType = {
+  product: {
+    name: string;
+    slug: string;
+    price: number;
+    category: { name: string };
+
+    images: { url: string }[];
+  };
+  quantity: number;
+  currentPrice: number;
+  totalPrice: number;
+};
+
+export interface CartResponse {
+  items: CartItemType[];
+  grandTotal: number;
+}
+
+export type CartItemDto = {
+  slug: string;
+  quantity: number;
 };

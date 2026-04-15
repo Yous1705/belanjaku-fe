@@ -21,6 +21,13 @@ export async function getProductDetailApi(slug: string) {
   });
 }
 
+export async function getHitsApi() {
+  return apiFetch<ProductTypeDashboard[]>(`/product/hits-product`, {
+    method: "GET",
+    headers: authHeader(),
+  });
+}
+
 export async function getMyWishlistsApi() {
   return apiFetch<MyWishlistType[]>("/wishlist/my-wishlists", {
     method: "GET",

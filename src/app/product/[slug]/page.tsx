@@ -16,14 +16,16 @@ function DetailPage() {
       .then(setProduct)
       .catch(console.error)
       .finally(() => setLoading(false));
-  });
+  }, [slug]);
+
   return (
-    <div className="min-h-screen bg-white text-slate-900 pb-20 selection:bg-black selection:text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-white text-zinc-900 pb-20 selection:bg-zinc-900 selection:text-white">
+      <div className="max-w-7xl mx-auto px-6 py-12">
         <ProductDetail
           images={product?.images ?? []}
           category={product?.category ?? { name: "Uncategorized" }}
           name={product?.name ?? "Loading..."}
+          slug={product?.slug ?? ""}
           reviews={product?.reviews ?? []}
           price={product?.price ?? 0}
           description={product?.description ?? "no description"}
