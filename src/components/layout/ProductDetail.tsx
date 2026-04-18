@@ -33,6 +33,7 @@ function ProductDetail({
   images,
   reviews,
   specifications,
+  currentPrice,
   //   specifications,
 }: ProductDetailProps) {
   const [activeIdx, setActiveIdx] = useState(0);
@@ -173,7 +174,14 @@ function ProductDetail({
             </div>
 
             <div className="text-4xl font-black tracking-tighter border-y border-zinc-100 py-8">
-              Rp {price.toLocaleString()}
+              <span className="text-xl font-black text-zinc-900 tracking-tighter">
+                Rp {currentPrice.toLocaleString("id-ID")}
+              </span>
+              {price !== currentPrice && (
+                <span className="text-xs text-zinc-300 line-through">
+                  Rp {price.toLocaleString("id-ID")}
+                </span>
+              )}
             </div>
           </div>
 

@@ -25,11 +25,9 @@ function WishlistPage() {
   });
   return (
     <div className="min-h-screen bg-white font-sans text-zinc-900">
-      {/* Background Decor subtle agar tidak terlalu polos */}
       <div className="fixed inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.2] pointer-events-none" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 py-16 md:py-24">
-        {/* Header Section */}
         <div className="flex flex-col gap-8 mb-16">
           <button
             className="group flex items-center gap-2 text-zinc-400 hover:text-zinc-900 transition-all w-fit"

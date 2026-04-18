@@ -4,6 +4,7 @@ export type ProductDetailType = {
   slug: string;
   description: string;
   price: number;
+  currentPrice: number;
   stock: number;
   category: {
     name: string;
@@ -33,6 +34,7 @@ export type ProductDetailProps = {
   name: string;
   slug: string;
   price: number;
+  currentPrice: number;
   description: string;
   stock: number;
   reviews: {
@@ -116,12 +118,15 @@ export type PageProps = {
 
 export type CartItemType = {
   product: {
+    id: number;
     name: string;
     slug: string;
-    price: number;
+    // price: number;
     category: { name: string };
 
-    images: { url: string }[];
+    images: {
+      url: string;
+    };
   };
   quantity: number;
   currentPrice: number;

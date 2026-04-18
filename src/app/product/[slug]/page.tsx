@@ -27,6 +27,7 @@ function DetailPage() {
           name={product?.name ?? "Loading..."}
           slug={product?.slug ?? ""}
           reviews={product?.reviews ?? []}
+          currentPrice={product?.currentPrice ?? 0}
           price={product?.price ?? 0}
           description={product?.description ?? "no description"}
           stock={product?.stock ?? 0}
