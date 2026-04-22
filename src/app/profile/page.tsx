@@ -7,6 +7,7 @@ import {
   setMainAddressApi,
 } from "@/api/services/profile/profile.service";
 import AddAddressCard from "@/components/layout/AddAddressCard";
+import UpdateAddressCard from "@/components/layout/UpdateAddressCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -319,13 +320,13 @@ function ProfilePage() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {addresses && addresses.length > 0 ? (
-                        addresses.map((addr, index) => (
+                        addresses.map((addr) => (
                           <div
-                            key={index}
+                            key={addr.id}
                             className={`p-4 rounded-lg border transition-all ${
                               addr.isMain
-                                ? "border-zinc-900 bg-zinc-50/50"
-                                : "border-zinc-100"
+                                ? "border-emerald-900 bg-emerald-50/50"
+                                : "border-emerald-100"
                             }`}
                           >
                             <div className="flex justify-between items-start mb-2">
@@ -344,20 +345,24 @@ function ProfilePage() {
                             <p className="text-xs text-zinc-500">
                               {addr.city}, {addr.postal}
                             </p>
-                            <div className="mt-4 flex gap-4 pt-3 border-t border-zinc-100/50">
-                              <button className="text-[10px] font-bold uppercase text-zinc-900 hover:opacity-50">
+                            <div className="mt-4 flex gap-4 pt-3 border-t pt-2">
+                              {/* <button className="text-[10px] font-bold uppercase text-zinc-900 border px-3 py-1 rounded-lg bg-blue-100 hover:bg-blue-200 transition-colors">
                                 Edit
-                              </button>
+                              </button> */}
+                              <UpdateAddressCard
+                                id={addr.id}
+                                onSuccess={fetchAddresses}
+                              />
                               {!addr.isMain && (
                                 <button
-                                  className="text-[10px] font-bold uppercase text-zinc-400 hover:text-zinc-900"
+                                  className="text-[10px] font-bold uppercase text-zinc-400 border px-3 py-1 rounded-lg bg-emerald-100 hover:bg-emerald-200 hover:text-zinc-900"
                                   onClick={() => handleSetMain(addr.id)}
                                 >
                                   Set Utama
                                 </button>
                               )}
                               <button
-                                className="text-[10px] font-bold uppercase text-rose-500 ml-auto"
+                                className="text-[10px] font-bold uppercase  ml-auto bg-rose-100 py-1 px-3 hover:bg-rose-200"
                                 onClick={() => handleDeleteAddress(addr.id)}
                               >
                                 Hapus

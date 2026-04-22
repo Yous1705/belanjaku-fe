@@ -52,6 +52,17 @@ export async function deleteAddressApi(addressId: number) {
   });
 }
 
+export async function updateAddressApi(
+  dto: Partial<AddressType>,
+  addressId: number,
+) {
+  return apiFetch("/user/update-address", {
+    method: "PUT",
+    headers: authHeader(),
+    body: JSON.stringify({ ...dto, addressId }),
+  });
+}
+
 function authHeader() {
   return { Authorization: `Bearer ${token.getToken()}` };
 }
