@@ -43,7 +43,7 @@ function ProductDetail({
 
   const handleThumbClick = (index: number) => {
     setActiveIdx(index);
-    api?.scrollTo(index); // Perintahkan carousel geser ke index ini
+    api?.scrollTo(index);
   };
 
   const averageRating =

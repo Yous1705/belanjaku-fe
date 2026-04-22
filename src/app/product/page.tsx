@@ -51,7 +51,6 @@ function ProductPage() {
       );
     } catch (err) {
       console.error("Failed to toggle wishlist", err);
-      // Optional: tambahkan toast notification error di sini
     }
   };
   const handleSearch = async () => {
