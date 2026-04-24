@@ -1,4 +1,5 @@
 "use client";
+import { getMyWishlistsApi } from "@/api/services/product/product.services";
 import {
   deleteAddressApi,
   getAddressApi,
@@ -13,11 +14,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MyWishlistType } from "@/type/product.type";
 import {
   AddressType,
   ProfileOrdertype,
   ProfileType,
 } from "@/type/profile.type";
+import { url } from "inspector";
 import {
   Camera,
   ChevronRight,
@@ -30,13 +33,16 @@ import {
   Trash2,
   User,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 function ProfilePage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("profile");
   const [profile, setProfile] = useState<ProfileType | null>(null);
   const [orders, setOrders] = useState<ProfileOrdertype[]>([]);
   const [addresses, setAddresses] = useState<AddressType[]>([]);
+  const [wishlists, setWishlists] = useState<MyWishlistType[]>([]);
   const [loading, setLoading] = useState(true);
 
   const menuItem = [
@@ -47,63 +53,8 @@ function ProfilePage() {
     { id: "reviews", label: "Ulasan", icon: Star },
   ];
 
-  const MOCK_USER = {
-    name: "Budi Santoso",
-    email: "budi.santoso@example.com",
-    role: "BUYER",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Budi",
-    createdAt: "Januari 2024",
-    addresses: [
-      {
-        id: 1,
-        isMain: true,
-        label: "Rumah",
-        address: "Jl. Sudirman No. 123",
-        city: "Jakarta Selatan",
-        postal: "12190",
-      },
-      {
-        id: 2,
-        isMain: false,
-        label: "Kantor",
-        address: "Ruko Emerald Blok A",
-        city: "Tangerang",
-        postal: "15310",
-      },
-    ],
-    orders: [
-      {
-        id: 1,
-        orderId: "ORD-12938",
-        status: "COMPLETED",
-        date: "12 Okt 2023",
-        total: 1250000,
-      },
-      {
-        id: 2,
-        orderId: "ORD-12940",
-        status: "SHIPPED",
-        date: "15 Okt 2023",
-        total: 850000,
-      },
-    ],
-    wishlist: [
-      {
-        id: 101,
-        name: "Mechanical Keyboard G-Pro",
-        price: 1450000,
-        img: "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=200",
-      },
-      {
-        id: 102,
-        name: 'UltraWide Monitor 34"',
-        price: 5200000,
-        img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=200",
-      },
-    ],
-  };
-
   useEffect(() => {
+    setLoading(true);
     getProfileApi()
       .then(setProfile)
       .catch(console.error)
@@ -111,8 +62,17 @@ function ProfilePage() {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     getProfileOrdersApi()
       .then(setOrders)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    getMyWishlistsApi()
+      .then(setWishlists)
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
@@ -158,7 +118,7 @@ function ProfilePage() {
                 <div className="relative group">
                   <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-zinc-100 bg-zinc-50 shadow-inner">
                     <img
-                      src={profile?.avatar || MOCK_USER.avatar}
+                      src={profile?.avatar || "/images/image.jpg"}
                       alt="Avatar"
                       className="w-full h-full object-cover"
                     />
@@ -385,14 +345,14 @@ function ProfilePage() {
                 {/* --- WISHLIST TAB --- */}
                 {activeTab === "wishlist" && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-300">
-                    {MOCK_USER.wishlist.map((item) => (
+                    {wishlists.map((item) => (
                       <div
                         key={item.id}
                         className="group flex gap-4 p-3 border border-zinc-100 rounded-xl hover:shadow-sm transition-all bg-zinc-50/30"
                       >
                         <div className="w-20 h-20 bg-white rounded-lg overflow-hidden shrink-0 border border-zinc-100">
                           <img
-                            src={item.img}
+                            src={item.images || "/images/image.jpg"}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           />
                         </div>
@@ -410,6 +370,11 @@ function ProfilePage() {
                               variant="outline"
                               size="sm"
                               className="flex-1 text-[10px] font-bold"
+                              onClick={() =>
+                                router.push(
+                                  `/checkout?slug=${item.slug}&quantity=1`,
+                                )
+                              }
                             >
                               Beli
                             </Button>

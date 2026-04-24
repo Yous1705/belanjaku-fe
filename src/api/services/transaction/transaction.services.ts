@@ -3,13 +3,13 @@ import { token } from "@/api/token";
 import { OrderType, PaymentResponseType } from "@/type/order.type";
 
 export async function checkOutCartItem() {
-  return apiFetch("/order/checkout", {
+  return apiFetch("/order/checkout-all", {
     method: "POST",
     headers: authHeader(),
   });
 }
 
-export async function getCheckOutItemApi() {
+export async function getCheckOutItemApi(slug: string) {
   return apiFetch<OrderType[]>("/order/pending", {
     method: "GET",
     headers: authHeader(),

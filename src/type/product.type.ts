@@ -142,3 +142,15 @@ export type CartItemDto = {
   slug: string;
   quantity: number;
 };
+
+export type checkoutItem = {
+  id: number;
+  name: string;
+  slug: string;
+  price: number;
+  discountPrice: string | null;
+  isDiscount: boolean;
+  stock: number;
+  category: { name: string };
+  images: { url: string }[];
+};
