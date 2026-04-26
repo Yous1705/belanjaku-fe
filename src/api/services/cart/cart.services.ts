@@ -10,7 +10,7 @@ export async function addItemToChart(dto: CartItemDto) {
   });
 }
 
-export async function getChartItem() {
+export async function getCartItem() {
   return apiFetch<CartResponse>(`/cart/my-cart`, {
     method: "GET",
     headers: authHeader(),

@@ -1,5 +1,5 @@
 "use client";
-import { getChartItem } from "@/api/services/cart/cart.services";
+import { getCartItem } from "@/api/services/cart/cart.services";
 import { checkOutCartItem } from "@/api/services/transaction/transaction.services";
 import CartCard from "@/components/layout/CartCard";
 import WishlistCard from "@/components/layout/WishlistCard";
@@ -11,26 +11,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { CartItemType, CartResponse } from "@/type/product.type";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 function CartPage() {
+  const router = useRouter();
   const [products, setProducts] = useState<CartResponse>();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getChartItem()
+    getCartItem()
       .then((data) => setProducts(data))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
-
-  const handleCreateCheckOutItem = async () => {
-    try {
-      const response = await checkOutCartItem();
-    } catch (error) {
-      console.error("Gagal Checkout: ", error);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-white font-sans text-zinc-900">
@@ -48,7 +42,7 @@ function CartPage() {
                 </p>
                 <button
                   className="px-4 py-4 bg-zinc-300 hover:bg-zinc-500"
-                  onClick={() => handleCreateCheckOutItem()}
+                  onClick={() => router.push(`/checkout?type=cart`)}
                 >
                   Buy All
                 </button>

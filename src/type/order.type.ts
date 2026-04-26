@@ -21,3 +21,33 @@ export type PaymentResponseType = {
     redirect_url: string;
   };
 };
+
+export type BuyNowResponseType = {
+  order: {
+    id: number;
+    orderId: string;
+    userId: number;
+    totalPrice: number;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+
+  payment: {
+    id: number;
+    orderId: number;
+    amount: number;
+    status: string;
+    method: string;
+
+    snapToken: string;
+    redirectUrl: string;
+    midtransOrderId: string;
+
+    expiresAt: string | null;
+    createdAt: string;
+  };
+
+  token: string;
+  redirect_url: string;
+};
