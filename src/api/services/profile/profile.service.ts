@@ -28,6 +28,13 @@ export async function getAddressApi() {
   });
 }
 
+export async function setFilteredOrdersApi(status: string) {
+  return apiFetch<ProfileOrdertype[]>(`/order/status/${status}`, {
+    method: "GET",
+    headers: authHeader(),
+  });
+}
+
 export async function addAddressApi(dto: AddressDto) {
   return apiFetch("/user/add-addresses", {
     method: "POST",

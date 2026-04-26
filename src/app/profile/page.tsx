@@ -5,6 +5,7 @@ import {
   getAddressApi,
   getProfileApi,
   getProfileOrdersApi,
+  setFilteredOrdersApi,
   setMainAddressApi,
 } from "@/api/services/profile/profile.service";
 import AddAddressCard from "@/components/layout/AddAddressCard";
@@ -45,6 +46,18 @@ function ProfilePage() {
   const [wishlists, setWishlists] = useState<MyWishlistType[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [activeStatus, setActiveStatus] = useState("ALL");
+
+  const orderStatuses = [
+    "ALL",
+    "PENDING",
+    "PAID",
+    "PROCESSING",
+    "SHIPPED",
+    "COMPLETED",
+    "CANCELLED",
+  ];
+
   const menuItem = [
     { id: "profile", label: "Profile", icon: User },
     { id: "orders", label: "Order", icon: Package },
@@ -76,6 +89,30 @@ function ProfilePage() {
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    const fetchOrdersByStatus = async () => {
+      setLoading(true);
+      try {
+        if (activeStatus === "ALL") {
+          const data = await getProfileOrdersApi();
+          setOrders(data);
+        } else {
+          const data = await setFilteredOrdersApi(activeStatus);
+          setOrders(data);
+        }
+      } catch (error) {
+        console.error("Gagal mengambil order:", error);
+        setOrders([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (activeTab === "orders") {
+      fetchOrdersByStatus();
+    }
+  }, [activeStatus, activeTab]);
 
   const fetchAddresses = async () => {
     try {
@@ -225,46 +262,77 @@ function ProfilePage() {
                 {/* --- ORDERS TAB --- */}
                 {activeTab === "orders" && (
                   <div className="space-y-4 animate-in fade-in duration-300">
-                    {orders.map((order, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-4 border border-zinc-100 rounded-lg hover:bg-zinc-50 transition-colors"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="p-2 bg-zinc-100 rounded-md text-zinc-500">
-                            <Package size={20} />
+                    {/* Status Filter Tabs */}
+                    <div className="flex gap-2 pb-4 overflow-x-auto no-scrollbar">
+                      {orderStatuses.map((status) => (
+                        <button
+                          key={status}
+                          onClick={() => setActiveStatus(status)}
+                          className={`px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider border transition-all whitespace-nowrap ${
+                            activeStatus === status
+                              ? "bg-zinc-900 text-white border-zinc-900 shadow-sm"
+                              : "bg-white text-zinc-400 border-zinc-100 hover:border-zinc-300"
+                          }`}
+                        >
+                          {status}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Order List */}
+                    {loading ? (
+                      <p className="text-center py-10 text-zinc-400 animate-pulse">
+                        Loading orders...
+                      </p>
+                    ) : orders.length > 0 ? (
+                      orders.map((order, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-4 border border-zinc-100 rounded-lg hover:bg-zinc-50 transition-colors"
+                        >
+                          {/* ... isi card order tetap sama seperti sebelumnya ... */}
+                          <div className="flex items-center gap-4">
+                            <div className="p-2 bg-zinc-100 rounded-md text-zinc-500">
+                              <Package size={20} />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold tracking-tight">
+                                {order.orderId}
+                              </p>
+                              <p className="text-[10px] text-zinc-500 uppercase font-medium">
+                                {order.updatedAt}
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-sm font-bold tracking-tight">
-                              {order.orderId}
-                            </p>
-                            <p className="text-[10px] text-zinc-500 uppercase font-medium">
-                              {order.updatedAt}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right flex items-center gap-4">
-                          <div>
-                            <p className="text-sm font-bold">
-                              Rp {order.totalPrice.toLocaleString()}
-                            </p>
-                            <Badge
-                              variant="secondary"
-                              className="text-[10px] py-0"
+                          <div className="text-right flex items-center gap-4">
+                            <div>
+                              <p className="text-sm font-bold">
+                                Rp {order.totalPrice.toLocaleString()}
+                              </p>
+                              <Badge
+                                variant="secondary"
+                                className="text-[10px] py-0"
+                              >
+                                {order.status}
+                              </Badge>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-zinc-400"
                             >
-                              {order.status}
-                            </Badge>
+                              <ChevronRight size={16} />
+                            </Button>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-zinc-400"
-                          >
-                            <ChevronRight size={16} />
-                          </Button>
                         </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-20 bg-zinc-50/50 rounded-xl border border-dashed">
+                        <p className="text-sm text-zinc-400 italic">
+                          Tidak ada pesanan dengan status {activeStatus}
+                        </p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
 
