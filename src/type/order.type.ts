@@ -27,8 +27,17 @@ export type BuyNowResponseType = {
     id: number;
     orderId: string;
     userId: number;
+
     totalPrice: number;
+
     status: string;
+
+    shippingRecipientName: string;
+    shippingPhoneNumber: string;
+    shippingAddress: string;
+    shippingCity: string;
+    shippingPostal: string;
+
     createdAt: string;
     updatedAt: string;
   };
@@ -36,6 +45,7 @@ export type BuyNowResponseType = {
   payment: {
     id: number;
     orderId: number;
+
     amount: number;
     status: string;
     method: string;
@@ -47,7 +57,41 @@ export type BuyNowResponseType = {
     expiresAt: string | null;
     createdAt: string;
   };
+};
 
-  token: string;
-  redirect_url: string;
+export type CheckoutResponseType = {
+  order: {
+    id: number;
+    orderId: string;
+    userId: number;
+
+    totalPrice: number;
+
+    status: string;
+
+    shippingRecipientName: string;
+    shippingPhoneNumber: string;
+    shippingAddress: string;
+    shippingCity: string;
+    shippingPostal: string;
+
+    createdAt: string;
+    updatedAt: string;
+  };
+
+  payment: {
+    id: number;
+    orderId: number;
+
+    amount: number;
+    status: string;
+    method: string;
+
+    snapToken: string;
+    redirectUrl: string;
+    midtransOrderId: string;
+
+    expiresAt: string | null;
+    createdAt: string;
+  };
 };
