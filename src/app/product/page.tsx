@@ -43,7 +43,6 @@ function ProductPage() {
     try {
       const response = await toggleWishlistApi(slug);
 
-      // Update state products secara lokal agar UI langsung berubah
       setProducts((prev) =>
         prev.map((p) =>
           p.slug === slug ? { ...p, isWishlisted: response.isWishlisted } : p,

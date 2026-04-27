@@ -95,3 +95,28 @@ export type CheckoutResponseType = {
     createdAt: string;
   };
 };
+
+export type OrderDetailType = {
+  id: number;
+  status: string;
+  totalPrice: number;
+  orderId: string;
+  items: OrderItemType[];
+  shippingAddress: string;
+  shippingCity: string;
+  shippingPostal: string;
+  shippingRecipientName: string;
+};
+
+export type OrderItemType = {
+  productId: number;
+  quantity: number;
+  price: number;
+  product: {
+    name: string;
+    description: string;
+    category: {
+      name: string;
+    };
+  };
+};

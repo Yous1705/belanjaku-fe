@@ -7,6 +7,7 @@ export type ProfileType = {
 };
 
 export type ProfileOrdertype = {
+  id: number;
   orderId: string;
   totalPrice: number;
   status: string;

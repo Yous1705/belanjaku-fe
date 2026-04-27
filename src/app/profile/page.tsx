@@ -66,6 +66,7 @@ function ProfilePage() {
     { id: "reviews", label: "Ulasan", icon: Star },
   ];
 
+  // ======Profile
   useEffect(() => {
     setLoading(true);
     getProfileApi()
@@ -74,6 +75,7 @@ function ProfilePage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // ======Orders
   useEffect(() => {
     setLoading(true);
     getProfileOrdersApi()
@@ -320,6 +322,7 @@ function ProfilePage() {
                               variant="ghost"
                               size="icon"
                               className="text-zinc-400"
+                              onClick={() => router.push(`order/${order.id}`)}
                             >
                               <ChevronRight size={16} />
                             </Button>
@@ -399,7 +402,6 @@ function ProfilePage() {
                           </div>
                         ))
                       ) : (
-                        // Col-span full supaya pesan kosong ini mengambil seluruh lebar grid (2 kolom)
                         <div className="text-center py-10 md:col-span-2">
                           <p className="text-sm text-zinc-500">
                             Anda belum memiliki alamat pengiriman.

@@ -3,6 +3,7 @@ import { token } from "@/api/token";
 import {
   BuyNowResponseType,
   CheckoutResponseType,
+  OrderDetailType,
   OrderType,
   PaymentResponseType,
 } from "@/type/order.type";
@@ -31,6 +32,13 @@ export async function buyNow(
     method: "POST",
     headers: authHeader(),
     body: JSON.stringify({ productId, addressId, quantity }),
+  });
+}
+
+export async function getOrderDetailApi(id: number) {
+  return apiFetch<OrderDetailType>(`/order/my-order/${id}`, {
+    method: "GET",
+    headers: authHeader(),
   });
 }
 

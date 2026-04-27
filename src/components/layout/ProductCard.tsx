@@ -29,10 +29,9 @@ function ProductCard({
 }: ProductCardProps) {
   const router = useRouter();
 
-  // Function to render star rating
   const renderStars = (rating: number) => {
     const stars = [];
-    const roundedRating = Math.round(rating * 2) / 2; // Round to nearest 0.5
+    const roundedRating = Math.round(rating * 2) / 2;
 
     for (let i = 1; i <= 5; i++) {
       if (i <= roundedRating) {
