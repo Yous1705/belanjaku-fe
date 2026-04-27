@@ -1,10 +1,12 @@
 "use client";
+import { AddReviewApi } from "@/api/services/review/review.services";
 import { getOrderDetailApi } from "@/api/services/transaction/transaction.services";
 import { OrderDetailType } from "@/type/order.type";
 import {
   AlertCircle,
   CheckCircle,
   CheckCircle2,
+  ChevronDown,
   ChevronLeft,
   Clock,
   CreditCard,
@@ -16,11 +18,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 function OrderPage() {
   const param = useParams();
   const id = Number(param.id);
+
+  const [selectedProductId, setSelectedProductId] = useState<number>();
   const [order, setOrder] = useState<OrderDetailType>();
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -28,8 +32,25 @@ function OrderPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
-    getOrderDetailApi(id).then(setOrder).catch(console.error);
+    console.log("param:", param);
+    console.log("id:", id);
+    getOrderDetailApi(id)
+      .then((data) => {
+        setOrder(data);
+        console.log("data :", data, " id :", id);
+
+        if (data.items.length > 0) {
+          setSelectedProductId(data.items[0].productId);
+        }
+      })
+      .catch(console.error);
   }, [id]);
+
+  const selectedProduct = useMemo(() => {
+    return order?.items.find(
+      (item) => item.productId === Number(selectedProductId),
+    );
+  }, [selectedProductId, order]);
 
   if (!order) {
     return (
@@ -54,11 +75,23 @@ function OrderPage() {
     }).format(amount);
   };
 
-  const handleSubmitReview = (e: React.FormEvent) => {
+  const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (rating === 0) return;
-    // Panggil API submit review Anda di sini
-    setIsSubmitted(true);
+
+    if (rating === 0 || !selectedProductId) return;
+    try {
+      await AddReviewApi(selectedProductId, id, {
+        rating,
+        comment: reviewText,
+      });
+      setIsSubmitted(true);
+      alert("Review berhasil dikirim.");
+    } catch (error) {
+      console.error("Submit review error:", error);
+      alert("Review gagal dikirim");
+    } finally {
+      setIsSubmitted(false);
+    }
   };
 
   return (
@@ -194,12 +227,12 @@ function OrderPage() {
               </div>
             </div>
 
-            {/* REVIEW SECTION */}
+            {/* DROPDOWN REVIEW SECTION */}
             <div
-              className={`rounded-3xl border transition-all duration-500 overflow-hidden ${
+              className={`rounded-[2rem] border transition-all duration-300 overflow-hidden ${
                 isCompleted
-                  ? "bg-white border-slate-100 shadow-sm"
-                  : "bg-slate-100 border-dashed border-slate-200 opacity-80"
+                  ? "bg-white border-slate-100 shadow-lg shadow-slate-200/50"
+                  : "bg-slate-100 border-dashed border-slate-200 opacity-70"
               }`}
             >
               <div className="p-6 border-b border-slate-50 flex items-center justify-between">
@@ -208,27 +241,68 @@ function OrderPage() {
                     size={18}
                     className={isCompleted ? "text-blue-500" : "text-slate-400"}
                   />
-                  Ulasan Produk
+                  Berikan Ulasan
                 </h3>
               </div>
 
               <div className="p-6">
                 {isCompleted ? (
                   isSubmitted ? (
-                    <div className="text-center py-4">
-                      <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <div className="text-center py-8">
+                      <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
                         <CheckCircle2 size={24} />
                       </div>
-                      <p className="font-bold text-slate-800">
-                        Ulasan Terkirim!
+                      <p className="font-bold text-slate-800 italic">
+                        Terima Kasih!
                       </p>
-                      <p className="text-xs text-slate-500 mt-1">
-                        Terima kasih atas feedback Anda.
+                      <p className="text-[11px] text-slate-500 mt-1">
+                        Ulasan berhasil disimpan.
                       </p>
                     </div>
                   ) : (
-                    <form onSubmit={handleSubmitReview} className="space-y-4">
-                      <div className="flex justify-center gap-1">
+                    <form onSubmit={handleSubmitReview} className="space-y-5">
+                      {/* DROPDOWN SELECT PRODUCT */}
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
+                          Pilih Produk
+                        </label>
+                        <div className="relative group">
+                          <select
+                            value={selectedProductId}
+                            onChange={(e) =>
+                              setSelectedProductId(Number(e.target.value))
+                            }
+                            className="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 appearance-none cursor-pointer focus:ring-2 focus:ring-blue-500 transition-all group-hover:bg-slate-100"
+                          >
+                            {order.items.map((item) => (
+                              <option
+                                key={item.productId}
+                                value={item.productId}
+                              >
+                                {item.product.name}
+                              </option>
+                            ))}
+                          </select>
+                          <ChevronDown
+                            size={16}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Info Produk yang sedang di-review (Optional visual aid) */}
+                      {selectedProduct && (
+                        <div className="flex items-center gap-3 p-3 bg-blue-50/50 rounded-xl border border-blue-100/50">
+                          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-blue-500 shadow-sm">
+                            <Package size={14} />
+                          </div>
+                          <p className="text-[11px] font-bold text-blue-600 line-clamp-1">
+                            {selectedProduct.product.name}
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="flex justify-center gap-2 py-2">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button
                             key={star}
@@ -236,31 +310,33 @@ function OrderPage() {
                             onClick={() => setRating(star)}
                             onMouseEnter={() => setHoverRating(star)}
                             onMouseLeave={() => setHoverRating(0)}
-                            className="transition-transform hover:scale-110"
+                            className="transition-all active:scale-90"
                           >
                             <Star
                               size={28}
                               className={`${
                                 star <= (hoverRating || rating)
-                                  ? "fill-amber-400 text-amber-400"
+                                  ? "fill-amber-400 text-amber-400 shadow-amber-200"
                                   : "text-slate-200"
-                              }`}
+                              } transition-colors`}
                             />
                           </button>
                         ))}
                       </div>
+
                       <textarea
                         value={reviewText}
                         onChange={(e) => setReviewText(e.target.value)}
-                        placeholder="Bagaimana kualitas produk ini?"
-                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-blue-500 outline-none text-sm min-h-[100px]"
+                        placeholder={`Tulis ulasan untuk ${selectedProduct?.product.name || "produk"}...`}
+                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-blue-500 outline-none text-sm min-h-[120px] transition-all"
                       />
+
                       <button
                         type="submit"
                         disabled={rating === 0}
-                        className={`w-full py-3 rounded-2xl font-bold text-sm transition-all ${
+                        className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all ${
                           rating > 0
-                            ? "bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700"
+                            ? "bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95"
                             : "bg-slate-200 text-slate-400 cursor-not-allowed"
                         }`}
                       >

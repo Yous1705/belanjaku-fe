@@ -298,6 +298,7 @@ function ProfilePage() {
                               <Package size={20} />
                             </div>
                             <div>
+                              <p className="text-5xl">{order.id}</p>
                               <p className="text-sm font-bold tracking-tight">
                                 {order.orderId}
                               </p>
