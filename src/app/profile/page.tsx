@@ -8,6 +8,7 @@ import {
   setFilteredOrdersApi,
   setMainAddressApi,
 } from "@/api/services/profile/profile.service";
+import { MyReviewApi } from "@/api/services/review/review.services";
 import AddAddressCard from "@/components/layout/AddAddressCard";
 import UpdateAddressCard from "@/components/layout/UpdateAddressCard";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +22,7 @@ import {
   ProfileOrdertype,
   ProfileType,
 } from "@/type/profile.type";
+import { myReviewType } from "@/type/review.type";
 import { url } from "inspector";
 import {
   Camera,
@@ -44,6 +46,7 @@ function ProfilePage() {
   const [orders, setOrders] = useState<ProfileOrdertype[]>([]);
   const [addresses, setAddresses] = useState<AddressType[]>([]);
   const [wishlists, setWishlists] = useState<MyWishlistType[]>([]);
+  const [reviews, setReviews] = useState<myReviewType[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [activeStatus, setActiveStatus] = useState("ALL");
@@ -84,6 +87,7 @@ function ProfilePage() {
       .finally(() => setLoading(false));
   }, []);
 
+  //  ========Wishlist
   useEffect(() => {
     setLoading(true);
     getMyWishlistsApi()
@@ -92,6 +96,14 @@ function ProfilePage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // ========review
+  useEffect(() => {
+    setLoading(true);
+    MyReviewApi()
+      .then(setReviews)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
   useEffect(() => {
     const fetchOrdersByStatus = async () => {
       setLoading(true);
@@ -465,16 +477,84 @@ function ProfilePage() {
 
                 {/* --- REVIEWS TAB --- */}
                 {activeTab === "reviews" && (
-                  <div className="animate-in fade-in duration-300 text-center py-20">
-                    <div className="mx-auto w-12 h-12 bg-zinc-100 rounded-full flex items-center justify-center mb-4">
-                      <Star size={24} className="text-zinc-300" />
-                    </div>
-                    <h4 className="text-sm font-bold tracking-tight">
-                      Belum Ada Ulasan
-                    </h4>
-                    <p className="text-xs text-zinc-400 mt-1 max-w-[200px] mx-auto">
-                      Berikan ulasan untuk produk yang telah Anda selesaikan.
-                    </p>
+                  <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 py-8">
+                    {reviews.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {reviews.map((item) => (
+                          <div
+                            key={item.id}
+                            className="group relative bg-white border border-zinc-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+                          >
+                            <div>
+                              {/* Header: Product Name & Rating */}
+                              <div className="flex justify-between items-start mb-4">
+                                <div className="flex flex-col">
+                                  <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600 mb-1">
+                                    {item.product.name}
+                                  </span>
+                                  <h4 className="font-bold text-zinc-900">
+                                    {item.user.name}
+                                  </h4>
+                                </div>
+                                <div className="flex items-center bg-zinc-50 px-2 py-1 rounded-lg border border-zinc-100">
+                                  <span className="text-sm font-bold text-amber-500 mr-1">
+                                    ★
+                                  </span>
+                                  <span className="text-sm font-medium text-zinc-700">
+                                    {item.rating}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Review Comment */}
+                              <p className="text-zinc-600 italic text-sm leading-relaxed mb-6">
+                                "{item.comment}"
+                              </p>
+                            </div>
+
+                            {/* Footer: Date */}
+                            <div className="flex items-center justify-between pt-4 border-t border-zinc-50">
+                              <span className="text-[10px] text-zinc-400 font-medium">
+                                {new Date(item.updatedAt).toLocaleDateString(
+                                  "id-ID",
+                                  {
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                  },
+                                )}
+                              </span>
+                              <div className="h-1.5 w-1.5 rounded-full bg-zinc-200 group-hover:bg-indigo-400 transition-colors"></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-24 bg-zinc-50/50 rounded-3xl border border-dashed border-zinc-200">
+                        <div className="bg-white p-4 rounded-full shadow-sm mb-4">
+                          <svg
+                            className="w-8 h-8 text-zinc-300"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.5"
+                              d="White-box-icon... 11.042 2 12 2s3.958.858 5 2M7 8h10M7 12h10m-8 4h8"
+                            />
+                          </svg>
+                        </div>
+                        <h3 className="text-zinc-900 font-medium">
+                          Belum ada ulasan
+                        </h3>
+                        <p className="text-sm text-zinc-500 mt-1">
+                          Review yang Anda berikan akan muncul secara otomatis
+                          di sini.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

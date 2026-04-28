@@ -1,6 +1,6 @@
 import { apiFetch } from "@/api/client";
 import { token } from "@/api/token";
-import { ReviewDto } from "@/type/review.type";
+import { myReviewType, ReviewDto } from "@/type/review.type";
 
 export async function AddReviewApi(
   productId: number,
@@ -11,6 +11,13 @@ export async function AddReviewApi(
     method: "POST",
     headers: authHeader(),
     body: JSON.stringify(dto),
+  });
+}
+
+export async function MyReviewApi() {
+  return apiFetch<myReviewType[]>("/review/my-review", {
+    method: "GET",
+    headers: authHeader(),
   });
 }
 function authHeader() {
