@@ -60,8 +60,8 @@ export type ProductTypeDashboard = {
   images: string;
   isWishlisted: boolean;
   reviews: {
-    rating: number;
-  }[];
+    rating: number | null;
+  };
 };
 
 export type ProductCardProps = {
@@ -75,7 +75,7 @@ export type ProductCardProps = {
   isWishlisted: boolean;
   onWishlistToggle?: () => void;
   reviews: {
-    rating: number;
+    rating: number | null;
   };
 };
 
@@ -153,4 +153,16 @@ export type checkoutItem = {
   stock: number;
   category: { name: string };
   images: { url: string }[];
+};
+
+export type searchProductType = {
+  id: number;
+  name: string;
+  images: { url: string }[];
+  slug: string;
+  price: number;
+  discountPrice: string | null;
+  isDiscount: boolean;
+  displayPrice: number;
+  reviews: { rating: number | null };
 };

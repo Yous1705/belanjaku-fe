@@ -91,9 +91,11 @@ function ProductCard({
             {category}
           </span>
           <div className="flex items-center gap-1.5">
-            <div className="flex gap-0.5">{renderStars(reviews.rating)}</div>
+            <div className="flex gap-0.5">
+              {renderStars(reviews.rating ?? 4)}
+            </div>
             <span className="text-[11px] font-bold text-zinc-700 ml-1">
-              {reviews.rating.toFixed(1)}
+              {reviews?.rating ?? 4}
             </span>
           </div>
         </div>

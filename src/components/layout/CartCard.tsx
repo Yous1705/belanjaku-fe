@@ -1,9 +1,10 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 
 import { CartItemType } from "@/type/product.type";
 
 import { Button } from "../ui/button";
-import { ShoppingCart, Trash2 } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -19,65 +20,80 @@ function CartCard({
   currentPrice,
   totalPrice,
 }: CartItemType) {
+  const [cartQuantity, setCartQuantity] = useState(quantity);
+
+  useEffect(() => {
+    setCartQuantity(quantity);
+  }, [quantity, totalPrice]);
+
+  const handleIncrement = () => {
+    const newQuantity = cartQuantity + 1;
+    setCartQuantity(newQuantity);
+  };
+
+  const handleDecrement = () => {
+    const newQuantity = Math.max(cartQuantity - 1, 1);
+    setCartQuantity(newQuantity);
+  };
+
   return (
-    <TableRow className="group border-zinc-100 hover:bg-zinc-50/50 transition-colors">
-      <TableCell className="py-6">
-        <div className="flex items-center gap-6">
-          {/* Gambar Produk: Ukuran sedikit lebih besar & Square */}
-          <div className="h-24 w-24 rounded-none overflow-hidden border border-zinc-100 bg-zinc-50 shrink-0">
-            <img
-              src={product.images?.url || "/images/image.jpg"}
-              alt={product.name}
-              onError={(e) => {
-                e.currentTarget.src = "/images/image.jpg";
-              }}
-              className="h-full w-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500"
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
+    <div className="group flex flex-col md:flex-row items-center gap-6 py-8 border-b border-zinc-100 last:border-0">
+      {/* Product Image */}
+      <div className="relative w-full md:w-40 h-40 bg-zinc-50 overflow-hidden rounded-2xl border border-zinc-100 shrink-0">
+        <img
+          src={product.images.url || "/images/image.jpg"}
+          alt={product.name}
+          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
+        />
+      </div>
+
+      <div className="flex-1 w-full space-y-2">
+        <div className="flex justify-between items-start">
+          <div>
+            <span className="text-[10px] font-black tracking-[0.2em] text-zinc-400 uppercase">
               {product.category.name}
             </span>
-            <span className="font-bold text-zinc-900 tracking-tight text-lg">
+            <h3 className="text-lg font-black tracking-tight uppercase mt-1">
               {product.name}
+            </h3>
+          </div>
+          <button className="text-zinc-300 hover:text-rose-500 transition-colors p-2">
+            <Trash2 size={18} strokeWidth={1.5} />
+          </button>
+        </div>
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-6">
+          {/* Quantity Controller */}
+          <div className="flex items-center gap-4 bg-zinc-50 w-fit rounded-full px-4 py-2 border border-zinc-100">
+            <button
+              className="text-zinc-400 hover:text-black transition-colors"
+              onClick={handleDecrement}
+            >
+              <Minus size={14} />
+            </button>
+            <span className="text-xs font-black w-8 text-center">
+              {cartQuantity}
             </span>
+            <button
+              className="text-zinc-400 hover:text-black transition-colors"
+              onClick={handleIncrement}
+            >
+              <Plus size={14} />
+            </button>
+          </div>
+
+          {/* Price Info */}
+          <div className="text-right">
+            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+              Subtotal
+            </p>
+            <p className="text-md font-black italic tracking-tighter">
+              IDR {(currentPrice * cartQuantity).toLocaleString()}
+            </p>
           </div>
         </div>
-      </TableCell>
-
-      <TableCell className="font-black text-zinc-900 text-base">
-        {quantity}
-      </TableCell>
-      <TableCell className="font-black text-zinc-900 text-base">
-        Rp {currentPrice.toLocaleString()}
-      </TableCell>
-      <TableCell className="font-black text-zinc-900 text-base">
-        Rp {totalPrice.toLocaleString()}
-      </TableCell>
-
-      <TableCell className="text-right py-6">
-        <div className="flex items-center gap-4">
-          {/* Tombol Hapus: Ghost Style */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-zinc-300 hover:text-red-500 hover:bg-red-50 transition-all rounded-none"
-            title="Remove item"
-          >
-            <Trash2 size={18} />
-          </Button>
-
-          {/* Tombol Beli: Industrial Black Style */}
-          <Button
-            className="bg-zinc-900 text-white gap-3 hover:bg-zinc-800 rounded-none h-11 px-6 text-[10px] font-bold uppercase tracking-widest transition-all"
-            size="sm"
-          >
-            <ShoppingCart size={16} />
-            <span className="hidden sm:inline">Buy</span>
-          </Button>
-        </div>
-      </TableCell>
-    </TableRow>
+      </div>
+    </div>
   );
 }
 

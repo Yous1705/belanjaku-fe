@@ -105,35 +105,6 @@ function ProductPage() {
     );
   return (
     <div className="flex flex-col min-h-screen bg-white text-zinc-900 font-sans">
-      {/* HEADER: Ultra-minimalist */}
-      <header className="sticky top-0 z-50 w-full border-b border-zinc-100 bg-white/80 backdrop-blur-xl">
-        <div className="container mx-auto px-6 flex h-20 items-center justify-between">
-          <a href="/" className="text-xl font-black tracking-[0.4em] uppercase">
-            VANTAGE
-          </a>
-
-          <div className="flex items-center gap-10">
-            <Link
-              href="/wishlist"
-              className="hidden lg:block text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-400 hover:text-black transition-colors"
-            >
-              Collections
-            </Link>
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                className="relative p-2 rounded-full hover:bg-zinc-100"
-              >
-                <ShoppingCart size={20} strokeWidth={1.5} />
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-zinc-900 text-[9px] text-white font-bold">
-                  2
-                </span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <main className="container mx-auto px-6 py-12 space-y-32">
         {/* HERO SECTION: Industrial Luxe (Pas untuk General Store) */}
         <section className="relative h-[600px] w-full overflow-hidden rounded-[2rem] bg-zinc-50 border border-zinc-100">
@@ -201,17 +172,7 @@ function ProductPage() {
                         onWishlistToggle={() =>
                           handleToggleWishlist(product.slug)
                         }
-                        reviews={
-                          product?.reviews && product.reviews.length > 0
-                            ? {
-                                rating:
-                                  product.reviews.reduce(
-                                    (sum, r) => sum + r.rating,
-                                    0,
-                                  ) / product.reviews.length,
-                              }
-                            : { rating: 4.7 }
-                        }
+                        reviews={product.reviews ?? { rating: 4 }}
                       />
                     </div>
                   </CarouselItem>
@@ -266,7 +227,7 @@ function ProductPage() {
 
           {/* Grid Produk dengan Animasi Masuk */}
           <div
-            key={activeCategory} // Critical: Memicu re-render untuk animasi
+            key={activeCategory}
             className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-forward"
           >
             {filteredProducts.length > 0 ? (
@@ -285,17 +246,7 @@ function ProductPage() {
                     images={product.images}
                     isWishlisted={product.isWishlisted}
                     onWishlistToggle={() => handleToggleWishlist(product.slug)}
-                    reviews={
-                      product?.reviews && product.reviews.length > 0
-                        ? {
-                            rating:
-                              product.reviews.reduce(
-                                (sum, r) => sum + r.rating,
-                                0,
-                              ) / product.reviews.length,
-                          }
-                        : { rating: 4.7 }
-                    }
+                    reviews={product.reviews ?? 4}
                   />
                 </div>
               ))

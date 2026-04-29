@@ -93,6 +93,7 @@ function ProductDetail({
   const hadnleAddItemToChart = async (slug: string, quantity: number) => {
     try {
       const response = await addItemToChart({ slug, quantity });
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
       console.error("Gagal menambah keranjang:", error);
     }

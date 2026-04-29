@@ -5,6 +5,7 @@ import {
   MyWishlistType,
   ProductDetailType,
   ProductTypeDashboard,
+  searchProductType,
   ToggleWishlistResponse,
 } from "@/type/product.type";
 
@@ -64,6 +65,13 @@ export async function searchProductApi(params?: {
   }`;
 
   return apiFetch<ProductTypeDashboard[]>(url, {
+    method: "GET",
+    headers: authHeader(),
+  });
+}
+
+export async function SearchProductApi(name: string) {
+  return apiFetch<searchProductType[]>(`/product/search/${name}`, {
     method: "GET",
     headers: authHeader(),
   });
