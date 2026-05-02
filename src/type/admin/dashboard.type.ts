@@ -1,4 +1,5 @@
-import { url } from "inspector";
+export type SalesChartPeriodType = "7days" | "month" | "year" | "all";
+
 export type SummaryType = {
   data: {
     totalUser: number;
@@ -62,9 +63,7 @@ export type TopProductType = {
     slug: string;
     description: string;
     category: string;
-    images: {
-      url: string;
-    }[];
+    images: string;
     price: number;
     stock: number;
   }[];
@@ -85,7 +84,7 @@ export type RevenueType = {
   totalRevenue: number;
 };
 
-export type UserStats = {
+export type UserStatsType = {
   buyer: number;
   admin: number;
 };
