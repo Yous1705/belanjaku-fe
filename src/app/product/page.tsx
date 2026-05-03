@@ -167,7 +167,7 @@ function ProductPage() {
                         description={product.description}
                         price={product.price}
                         displayPrice={product.displayPrice}
-                        images={product.images}
+                        image={product.image}
                         isWishlisted={product.isWishlisted}
                         onWishlistToggle={() =>
                           handleToggleWishlist(product.slug)
@@ -243,7 +243,7 @@ function ProductPage() {
                     description={product.description}
                     price={product.price}
                     displayPrice={product.displayPrice}
-                    images={product.images}
+                    image={product.image}
                     isWishlisted={product.isWishlisted}
                     onWishlistToggle={() => handleToggleWishlist(product.slug)}
                     reviews={product.reviews ?? 4}

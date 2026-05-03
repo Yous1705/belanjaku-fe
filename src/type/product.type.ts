@@ -55,9 +55,10 @@ export type ProductTypeDashboard = {
   slug: string;
   description: string;
   category: string;
+  stock: number;
   price: number;
   displayPrice: number;
-  images: string;
+  image: string;
   isWishlisted: boolean;
   reviews: {
     rating: number | null;
@@ -69,7 +70,7 @@ export type ProductCardProps = {
   slug: string;
   description: string;
   price: number;
-  images: string;
+  image: string;
   category: string;
   displayPrice: number;
   isWishlisted: boolean;

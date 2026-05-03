@@ -20,7 +20,7 @@ function ProductCard({
   slug,
   description,
   price,
-  images,
+  image,
   category,
   isWishlisted,
   reviews,
@@ -65,7 +65,7 @@ function ProductCard({
     <Card className="group relative flex flex-col overflow-hidden border border-zinc-200 bg-white rounded-none transition-all duration-500 hover:shadow-2xl">
       <div className="relative aspect-square overflow-hidden bg-zinc-50">
         <img
-          src={images?.[0] || "/images/image.jpg"}
+          src={image || "/images/image.jpg"}
           alt={name}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />

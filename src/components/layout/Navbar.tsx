@@ -333,12 +333,13 @@ function Navbar() {
                     Settings
                   </a>
                   <div className="h-[1px] bg-zinc-50 my-1" />
-                  <button
+                  <Link
+                    href="auth/login"
                     className="w-full text-left px-4 py-3 text-xs font-black text-red-500 hover:bg-red-50 transition-colors uppercase tracking-widest"
                     onClick={handleLogout}
                   >
                     Sign Out
-                  </button>
+                  </Link>
                 </div>
               )}
             </div>
