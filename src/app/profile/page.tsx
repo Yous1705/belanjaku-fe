@@ -390,9 +390,6 @@ function ProfilePage() {
                               {addr.city}, {addr.postal}
                             </p>
                             <div className="mt-4 flex gap-4 pt-3 border-t pt-2">
-                              {/* <button className="text-[10px] font-bold uppercase text-zinc-900 border px-3 py-1 rounded-lg bg-blue-100 hover:bg-blue-200 transition-colors">
-                                Edit
-                              </button> */}
                               <UpdateAddressCard
                                 id={addr.id}
                                 onSuccess={fetchAddresses}

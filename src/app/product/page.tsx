@@ -30,47 +30,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { useProducts } from "@/hooks/product/useProducts";
 
 function ProductPage() {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState("Semua");
-  const handleLogout = () => {
-    token.clear();
-    router.replace("auth/login");
-  };
 
-  const handleToggleWishlist = async (slug: string) => {
-    try {
-      const response = await toggleWishlistApi(slug);
-
-      setProducts((prev) =>
-        prev.map((p) =>
-          p.slug === slug ? { ...p, isWishlisted: response.isWishlisted } : p,
-        ),
-      );
-    } catch (err) {
-      console.error("Failed to toggle wishlist", err);
-    }
-  };
-  const handleSearch = async () => {
-    setLoading(true);
-    try {
-      const data = search
-        ? await searchProductApi({ search })
-        : await getProductsApi();
-
-      setProducts(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [products, setProducts] = useState<ProductTypeDashboard[]>([]);
-  const [hitsProduct, setHitsProduct] = useState<ProductTypeDashboard[]>([]);
-  const [search, setSearch] = useState("");
+  const { products, wishlistToggle, loading, error, hitProducts } =
+    useProducts();
 
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
@@ -85,24 +52,19 @@ function ProductPage() {
     return Array.from(categories);
   }, [products]);
 
-  useEffect(() => {
-    getProductsApi()
-      .then(setProducts)
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    getHitsApi()
-      .then(setHitsProduct)
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
-
   if (loading)
     return (
-      <p className="text-5xl font-extrabold text-blue-600"> Loading .......</p>
+      <div className="flex h-screen items-center justify-center text-slate-500 bg-slate-50">
+        Loading application...
+      </div>
     );
+  if (error)
+    return (
+      <div className="flex h-screen items-center justify-center text-rose-500 bg-slate-50">
+        {error}
+      </div>
+    );
+
   return (
     <div className="flex flex-col min-h-screen bg-white text-zinc-900 font-sans">
       <main className="container mx-auto px-6 py-12 space-y-32">
@@ -153,7 +115,7 @@ function ProductPage() {
               className="relative w-full"
             >
               <CarouselContent className="-ml-6">
-                {hitsProduct.map((product) => (
+                {hitProducts.map((product) => (
                   <CarouselItem
                     key={product.id}
                     className="pl-6 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
@@ -169,9 +131,7 @@ function ProductPage() {
                         displayPrice={product.displayPrice}
                         image={product.image}
                         isWishlisted={product.isWishlisted}
-                        onWishlistToggle={() =>
-                          handleToggleWishlist(product.slug)
-                        }
+                        onWishlistToggle={() => wishlistToggle(product.slug)}
                         reviews={product.reviews ?? { rating: 4 }}
                       />
                     </div>
@@ -245,7 +205,7 @@ function ProductPage() {
                     displayPrice={product.displayPrice}
                     image={product.image}
                     isWishlisted={product.isWishlisted}
-                    onWishlistToggle={() => handleToggleWishlist(product.slug)}
+                    onWishlistToggle={() => wishlistToggle(product.slug)}
                     reviews={product.reviews ?? 4}
                   />
                 </div>
